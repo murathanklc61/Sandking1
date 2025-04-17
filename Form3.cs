@@ -86,7 +86,20 @@ namespace WindowsFormsApp1
                             // İşlem tamamlandığında kullanıcıya bilgi ver
                             Invoke(new Action(() =>
                             {
-                                MessageBox.Show($"Netstat log saved to:\n{logFilePath}", "Log Completed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                DialogResult dialogResult = MessageBox.Show(
+                                    $"Netstat log saved to:\n{logFilePath}",
+                                    "Log Completed",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information
+                                );
+
+                                // OK tuşuna basıldıysa Form4'ü aç ve Form3'ü kapat
+                                if (dialogResult == DialogResult.OK)
+                                {
+                                    Form4 form4 = new Form4(); // Yeni Form4 nesnesi oluştur
+                                    form4.Show(); // Form4'ü göster
+                                    this.Close(); // Form3'ü kapat
+                                }
                             }));
                         });
                     }
@@ -97,6 +110,8 @@ namespace WindowsFormsApp1
                 }
             }
         }
+
+
 
         // Netstat komutunu çalıştır ve çıktıyı döndür
         private string RunNetstat()
