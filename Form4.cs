@@ -23,10 +23,11 @@ namespace WindowsFormsApp1
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
-            // File paths for driver and service logs
-            string driverOutputPath = Path.Combine(desktopPath, $"driver_snapshot_{timestamp}.txt");
+            // File paths for driver, service, and registry logs
+            string driverOutputPath = Path.Combine(desktopPath, $"DriverNew_{timestamp}.txt");
             string allServicesPath = Path.Combine(desktopPath, $"all_services_{timestamp}.txt");
-            string serviceNamesPath = Path.Combine(desktopPath, $"service_names_{timestamp}.txt");
+            string serviceNamesPath = Path.Combine(desktopPath, $"ServicesNew_{timestamp}.txt");
+            string registrySnapshotPath = Path.Combine(desktopPath, $"RegistryNew_{timestamp}.txt");
 
             try
             {
@@ -43,9 +44,27 @@ namespace WindowsFormsApp1
                 ServicesLogger.LogAllServices(allServicesPath);
                 ServicesLogger.LogAllServiceNames(serviceNamesPath);
 
+                // Take registry snapshot
+                var registrySnapshot = new RegistrySnapshot();
+                var snapshotData = registrySnapshot.TakeSnapshot();
+
+                // Save registry snapshot to file
+                using (var writer = new StreamWriter(registrySnapshotPath))
+                {
+                    foreach (var path in snapshotData.Keys)
+                    {
+                        writer.WriteLine($"Registry Path: {path}");
+                        foreach (var kvp in snapshotData[path])
+                        {
+                            writer.WriteLine($"  {kvp.Key}: {kvp.Value}");
+                        }
+                        writer.WriteLine();
+                    }
+                }
+
                 // Show success message
                 MessageBox.Show(
-                    $"Logs have been saved successfully:\n{driverOutputPath}\n{allServicesPath}\n{serviceNamesPath}",
+                    $"Logs have been saved successfully:\n{driverOutputPath}\n{allServicesPath}\n{serviceNamesPath}\n{registrySnapshotPath}",
                     "Completed",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information

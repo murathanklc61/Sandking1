@@ -29,9 +29,9 @@ namespace WindowsFormsApp1
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
             // File paths for driver and service logs
-            string driverOutputPath = Path.Combine(desktopPath, $"driver_snapshot_{timestamp}.txt");
-            string serviceNamesPath = Path.Combine(desktopPath, $"service_names_{timestamp}.txt");
-            string registrySnapshotPath = Path.Combine(desktopPath, $"registry_snapshot_{timestamp}.txt");
+            string driverOutputPath = Path.Combine(desktopPath, $"DriverOld_{timestamp}.txt");
+            string serviceNamesPath = Path.Combine(desktopPath, $"ServicesOld_{timestamp}.txt");
+            string registrySnapshotPath = Path.Combine(desktopPath, $"RegistryOld_{timestamp}.txt");
 
             StringBuilder result = new StringBuilder();
 
