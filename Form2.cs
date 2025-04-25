@@ -31,6 +31,7 @@ namespace WindowsFormsApp1
             // File paths for driver and service logs
             string driverOutputPath = Path.Combine(desktopPath, $"driver_snapshot_{timestamp}.txt");
             string serviceNamesPath = Path.Combine(desktopPath, $"service_names_{timestamp}.txt");
+            string registrySnapshotPath = Path.Combine(desktopPath, $"registry_snapshot_{timestamp}.txt");
 
             StringBuilder result = new StringBuilder();
 
@@ -50,9 +51,27 @@ namespace WindowsFormsApp1
                 // Log all services and their names
                 ServicesLogger.LogAllServiceNames(serviceNamesPath);
 
+                // Take registry snapshot
+                var registrySnapshot = new RegistrySnapshot();
+                var snapshotData = registrySnapshot.TakeSnapshot();
+
+                // Save registry snapshot to file
+                using (var writer = new StreamWriter(registrySnapshotPath))
+                {
+                    foreach (var path in snapshotData.Keys)
+                    {
+                        writer.WriteLine($"Registry Path: {path}");
+                        foreach (var kvp in snapshotData[path])
+                        {
+                            writer.WriteLine($"  {kvp.Key}: {kvp.Value}");
+                        }
+                        writer.WriteLine();
+                    }
+                }
+
                 // Show success message
                 DialogResult dialogResult = MessageBox.Show(
-                    $"Snapshot başarıyla kaydedildi:\n{driverOutputPath}\n{serviceNamesPath}",
+                    $"Snapshot başarıyla kaydedildi:\n{driverOutputPath}\n{serviceNamesPath}\n{registrySnapshotPath}",
                     "Tamamlandı",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
